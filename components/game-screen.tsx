@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +34,18 @@ export function GameScreen() {
   } = useGameStore();
 
   const currentQuestion = questions[currentQuestionIndex];
+
+  const getImageId = async () => {
+    const res = await fetch(
+      `https://graph.mapillary.com/images?access_token=${process.env.NEXT_PUBLIC_MAPILLARY_TOKEN}&fields=id,geometry&bbox=12.967,55.597,13.008,55.607&limit=3`
+    );
+    const data = await res.json();
+    console.log(data);
+  };
+
+  useEffect(() => {
+    getImageId();
+  }, [currentQuestion]);
 
   if (!currentQuestion) return null;
 

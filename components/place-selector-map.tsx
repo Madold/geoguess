@@ -9,8 +9,9 @@ interface Props {
 
 export const PlaceSelectorMap = ({ onMarkerPlaced }: Props) => {
   const mapRef = useRef<Map | null>(null);
-  const markerRef = useRef<Marker | null>(null);
+  const userMarkerRef = useRef<Marker | null>(null);
   const correctMarkerRef = useRef<Marker | null>(null);
+  const lineLayerId = "distance-line";
   const mapDiv = useRef<HTMLDivElement>(null);
 
   const { selectedCoordinates, hasAnswered, questions, currentQuestionIndex } =
@@ -32,15 +33,17 @@ export const PlaceSelectorMap = ({ onMarkerPlaced }: Props) => {
 
       const { lng, lat } = e.lngLat;
 
-      if (markerRef.current) {
-        markerRef.current.remove();
+      // Eliminar marcador anterior si existe
+      if (userMarkerRef.current) {
+        userMarkerRef.current.remove();
       }
 
-      const newMarker = new Marker({ color: "#3B82F6" })
+      // Crear marcador azul para la respuesta del usuario
+      const userMarker = new Marker({ color: "#3B82F6" })
         .setLngLat([lng, lat])
         .addTo(map);
 
-      markerRef.current = newMarker;
+      userMarkerRef.current = userMarker;
 
       onMarkerPlaced?.(lng, lat);
     });
@@ -50,37 +53,129 @@ export const PlaceSelectorMap = ({ onMarkerPlaced }: Props) => {
     };
   }, [hasAnswered, onMarkerPlaced]);
 
-  // Mostrar la ubicación correcta cuando el usuario responda
+  // Mostrar la ubicación correcta y la línea cuando el usuario responda
   useEffect(() => {
-    if (hasAnswered && questions[currentQuestionIndex] && mapRef.current) {
+    if (
+      hasAnswered &&
+      selectedCoordinates &&
+      questions[currentQuestionIndex] &&
+      mapRef.current
+    ) {
+      const map = mapRef.current;
       const correctLocation = questions[currentQuestionIndex].location;
 
-      // Crear marcador verde para la ubicación correcta
-      if (correctMarkerRef.current) {
-        correctMarkerRef.current.remove();
+      // Función para añadir todos los marcadores
+      const addMarkers = () => {
+        // Asegurarse de que el marcador azul del usuario esté visible
+        if (userMarkerRef.current) {
+          userMarkerRef.current.remove();
+        }
+        const userMarker = new Marker({ color: "#3B82F6" })
+          .setLngLat([selectedCoordinates.lng, selectedCoordinates.lat])
+          .addTo(map);
+        userMarkerRef.current = userMarker;
+
+        // Crear marcador verde para la ubicación correcta
+        if (correctMarkerRef.current) {
+          correctMarkerRef.current.remove();
+        }
+        const correctMarker = new Marker({ color: "#10B981" })
+          .setLngLat([correctLocation.longitude, correctLocation.latitude])
+          .addTo(map);
+        correctMarkerRef.current = correctMarker;
+      };
+
+      // Agregar marcadores
+      addMarkers();
+
+      // Agregar línea conectando ambos puntos
+      const geojson = {
+        type: "FeatureCollection" as const,
+        features: [
+          {
+            type: "Feature" as const,
+            geometry: {
+              type: "LineString" as const,
+              coordinates: [
+                [selectedCoordinates.lng, selectedCoordinates.lat],
+                [correctLocation.longitude, correctLocation.latitude],
+              ],
+            },
+            properties: {},
+          },
+        ],
+      };
+
+      // Esperar a que el mapa esté completamente cargado
+      if (map.isStyleLoaded()) {
+        addLineToMap(map, geojson);
+      } else {
+        map.once("style.load", () => {
+          addLineToMap(map, geojson);
+          // Re-agregar marcadores después de que se cargue el estilo
+          addMarkers();
+        });
       }
-
-      const correctMarker = new Marker({ color: "#10B981" })
-        .setLngLat([correctLocation.longitude, correctLocation.latitude])
-        .addTo(mapRef.current);
-
-      correctMarkerRef.current = correctMarker;
     }
-  }, [hasAnswered, questions, currentQuestionIndex]);
+  }, [hasAnswered, selectedCoordinates, questions, currentQuestionIndex]);
 
-  // Limpiar los marcadores cuando cambie de pregunta
+  // Función auxiliar para agregar la línea al mapa
+  const addLineToMap = (map: Map, geojson: any) => {
+    // Eliminar capa y fuente anterior si existen
+    if (map.getLayer(lineLayerId)) {
+      map.removeLayer(lineLayerId);
+    }
+    if (map.getSource(lineLayerId)) {
+      map.removeSource(lineLayerId);
+    }
+
+    // Agregar fuente y capa
+    map.addSource(lineLayerId, {
+      type: "geojson",
+      data: geojson,
+    });
+
+    map.addLayer({
+      id: lineLayerId,
+      type: "line",
+      source: lineLayerId,
+      layout: {
+        "line-join": "round",
+        "line-cap": "round",
+      },
+      paint: {
+        "line-color": "#EF4444",
+        "line-width": 3,
+        "line-dasharray": [2, 2],
+      },
+    });
+  };
+
+  // Limpiar los marcadores y la línea cuando cambie de pregunta
   useEffect(() => {
-    if (!selectedCoordinates) {
-      if (markerRef.current) {
-        markerRef.current.remove();
-        markerRef.current = null;
+    if (!selectedCoordinates && !hasAnswered) {
+      // Limpiar marcador del usuario
+      if (userMarkerRef.current) {
+        userMarkerRef.current.remove();
+        userMarkerRef.current = null;
       }
+      // Limpiar marcador correcto
       if (correctMarkerRef.current) {
         correctMarkerRef.current.remove();
         correctMarkerRef.current = null;
       }
+      // Limpiar línea
+      if (mapRef.current) {
+        const map = mapRef.current;
+        if (map.getLayer(lineLayerId)) {
+          map.removeLayer(lineLayerId);
+        }
+        if (map.getSource(lineLayerId)) {
+          map.removeSource(lineLayerId);
+        }
+      }
     }
-  }, [selectedCoordinates]);
+  }, [selectedCoordinates, hasAnswered]);
 
   return <div ref={mapDiv} className="w-full h-[600px] rounded-lg my-3"></div>;
 };

@@ -178,14 +178,21 @@ export function GameScreen() {
                 )}
 
                 {hasAnswered && (
-                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                      <span>Tu respuesta</span>
+                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-blue-500 shadow-sm"></div>
+                      <span className="font-medium">Tu respuesta</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                      <span>Ubicación correcta</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-green-500 shadow-sm"></div>
+                      <span className="font-medium">Ubicación correcta</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-1 bg-red-500"
+                        style={{ width: "20px" }}
+                      ></div>
+                      <span className="font-medium">Distancia</span>
                     </div>
                   </div>
                 )}

@@ -2,16 +2,20 @@ import { useRef, useEffect } from "react";
 import { Viewer } from "mapillary-js";
 import "mapillary-js/dist/mapillary.css";
 
-export const StreetView = () => {
+interface Props {
+  imageId?: string;
+}
+
+export const StreetView = ({ imageId = "498763468214164" }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
+    if (containerRef.current && imageId) {
       const viewerInstance = new Viewer({
         accessToken: process.env.NEXT_PUBLIC_MAPILLARY_TOKEN!,
         container: containerRef.current,
-        imageId: "498763468214164",
+        imageId,
       });
 
       viewerRef.current = viewerInstance;
@@ -23,7 +27,7 @@ export const StreetView = () => {
         }
       };
     }
-  }, []);
+  }, [imageId]);
 
   return <div ref={containerRef} className="w-full h-[600px]"></div>;
 };

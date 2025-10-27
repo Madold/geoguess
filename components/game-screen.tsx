@@ -23,7 +23,10 @@ export function GameScreen() {
     score,
     hasAnswered,
     selectedAnswer,
-    selectAnswer,
+    selectedCoordinates,
+    distanceFromTarget,
+    setSelectedCoordinates,
+    checkAnswer,
     nextQuestion,
     playerName,
     difficulty,
@@ -33,8 +36,12 @@ export function GameScreen() {
 
   if (!currentQuestion) return null;
 
+  // Verificar si la respuesta es correcta basándose en la distancia (40 km o menos)
+  const THRESHOLD_KM = 40;
   const isCorrect =
-    hasAnswered && selectedAnswer === currentQuestion.correctAnswer;
+    hasAnswered &&
+    distanceFromTarget !== null &&
+    distanceFromTarget <= THRESHOLD_KM;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -103,50 +110,69 @@ export function GameScreen() {
 
                 <div className="my-6">
                   <Button
+                    onClick={checkAnswer}
                     className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
-                    disabled={hasAnswered}
+                    disabled={hasAnswered || !selectedCoordinates}
                   >
-                    Check Answer
+                    {selectedCoordinates
+                      ? "Verificar Respuesta"
+                      : "Selecciona una ubicación en el mapa"}
                   </Button>
                 </div>
 
-                <PlaceSelectorMap />
+                <PlaceSelectorMap onMarkerPlaced={setSelectedCoordinates} />
 
-                {/* <div className="space-y-3">
-                  {currentQuestion.options.map((option) => {
-                    const isSelected = selectedAnswer === option;
-                    const isCorrectOption = option === currentQuestion.correctAnswer;
-                    const showAsCorrect = hasAnswered && isCorrectOption;
-                    const showAsIncorrect = hasAnswered && isSelected && !isCorrectOption;
-
-                    return (
-                      <Button
-                        key={option}
-                        onClick={() => !hasAnswered && selectAnswer(option)}
-                        disabled={hasAnswered}
-                        variant={showAsCorrect ? "default" : showAsIncorrect ? "destructive" : "outline"}
-                        className={`w-full h-16 text-lg font-medium justify-between transition-all ${
-                          showAsCorrect ? 'bg-green-600 hover:bg-green-700' : ''
-                        } ${
-                          !hasAnswered && 'hover:bg-blue-50 hover:border-blue-400'
-                        }`}
-                      >
-                        <span>{option}</span>
-                        {showAsCorrect && <CheckCircle2 className="w-6 h-6" />}
-                        {showAsIncorrect && <XCircle className="w-6 h-6" />}
-                      </Button>
-                    );
-                  })}
-                </div>
+                {!hasAnswered && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    Haz clic en el mapa para seleccionar tu respuesta
+                  </p>
+                )}
 
                 {hasAnswered && (
+                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      <span>Tu respuesta</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <span>Ubicación correcta</span>
+                    </div>
+                  </div>
+                )}
+
+                {hasAnswered && distanceFromTarget !== null && (
                   <div className="mt-6 space-y-4">
-                    <div className={`p-4 rounded-lg ${isCorrect ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'}`}>
-                      <p className={`text-lg font-semibold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                        {isCorrect ? 'Correct!' : 'Incorrect!'}
+                    <div
+                      className={`p-4 rounded-lg ${
+                        isCorrect
+                          ? "bg-green-50 border-2 border-green-200"
+                          : "bg-red-50 border-2 border-red-200"
+                      }`}
+                    >
+                      <p
+                        className={`text-lg font-semibold ${
+                          isCorrect ? "text-green-800" : "text-red-800"
+                        }`}
+                      >
+                        {isCorrect ? "¡Correcto!" : "¡Incorrecto!"}
                       </p>
                       <p className="text-sm text-gray-700 mt-1">
-                        The correct answer is <span className="font-bold">{currentQuestion.correctAnswer}</span>, {currentQuestion.location.country}
+                        La ubicación correcta es{" "}
+                        <span className="font-bold">
+                          {currentQuestion.location.name}
+                        </span>
+                        , {currentQuestion.location.country}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-2">
+                        Tu respuesta estuvo a{" "}
+                        <span className="font-bold">
+                          {distanceFromTarget.toFixed(2)} km
+                        </span>{" "}
+                        de distancia
+                        {isCorrect
+                          ? " (dentro del umbral de 40 km)"
+                          : " (fuera del umbral de 40 km)"}
                       </p>
                     </div>
 
@@ -157,10 +183,12 @@ export function GameScreen() {
                       }}
                       className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
                     >
-                      {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'See Results'}
+                      {currentQuestionIndex < questions.length - 1
+                        ? "Siguiente Pregunta"
+                        : "Ver Resultados"}
                     </Button>
                   </div>
-                )} */}
+                )}
               </CardContent>
             </Card>
           </div>

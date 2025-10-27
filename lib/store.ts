@@ -1,5 +1,6 @@
-import { create } from 'zustand';
-import { type Difficulty, type Question, generateQuestions } from './game-data';
+import { create } from "zustand";
+import { type Difficulty, type Question, generateQuestions } from "./game-data";
+import { calculateHaversineDistance } from "./utils";
 
 interface GameState {
   playerName: string;
@@ -9,25 +10,30 @@ interface GameState {
   score: number;
   hasAnswered: boolean;
   selectedAnswer: string | null;
+  selectedCoordinates: { lng: number; lat: number } | null;
+  distanceFromTarget: number | null;
   gameStarted: boolean;
   gameFinished: boolean;
 
   setPlayerName: (name: string) => void;
   setDifficulty: (difficulty: Difficulty) => void;
   startGame: () => void;
-  selectAnswer: (answer: string) => void;
+  setSelectedCoordinates: (lng: number, lat: number) => void;
+  checkAnswer: () => void;
   nextQuestion: () => void;
   resetGame: () => void;
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
-  playerName: '',
+  playerName: "",
   difficulty: null,
   questions: [],
   currentQuestionIndex: 0,
   score: 0,
   hasAnswered: false,
   selectedAnswer: null,
+  selectedCoordinates: null,
+  distanceFromTarget: null,
   gameStarted: false,
   gameFinished: false,
 
@@ -46,20 +52,43 @@ export const useGameStore = create<GameState>((set, get) => ({
       score: 0,
       hasAnswered: false,
       selectedAnswer: null,
+      selectedCoordinates: null,
+      distanceFromTarget: null,
       gameStarted: true,
-      gameFinished: false
+      gameFinished: false,
     });
   },
 
-  selectAnswer: (answer: string) => {
-    const { questions, currentQuestionIndex, score } = get();
+  setSelectedCoordinates: (lng: number, lat: number) => {
+    set({ selectedCoordinates: { lng, lat } });
+  },
+
+  checkAnswer: () => {
+    const { questions, currentQuestionIndex, score, selectedCoordinates } =
+      get();
+
+    if (!selectedCoordinates) return;
+
     const currentQuestion = questions[currentQuestionIndex];
-    const isCorrect = answer === currentQuestion.correctAnswer;
+    const { latitude, longitude } = currentQuestion.location;
+
+    // Calcular la distancia usando Haversine
+    const distance = calculateHaversineDistance(
+      selectedCoordinates.lat,
+      selectedCoordinates.lng,
+      latitude,
+      longitude
+    );
+
+    // Umbral de 40 km
+    const THRESHOLD_KM = 40;
+    const isCorrect = distance <= THRESHOLD_KM;
 
     set({
-      selectedAnswer: answer,
+      selectedAnswer: currentQuestion.location.name,
+      distanceFromTarget: distance,
       hasAnswered: true,
-      score: isCorrect ? score + 1 : score
+      score: isCorrect ? score + 1 : score,
     });
   },
 
@@ -73,20 +102,25 @@ export const useGameStore = create<GameState>((set, get) => ({
       set({
         currentQuestionIndex: nextIndex,
         hasAnswered: false,
-        selectedAnswer: null
+        selectedAnswer: null,
+        selectedCoordinates: null,
+        distanceFromTarget: null,
       });
     }
   },
 
-  resetGame: () => set({
-    playerName: '',
-    difficulty: null,
-    questions: [],
-    currentQuestionIndex: 0,
-    score: 0,
-    hasAnswered: false,
-    selectedAnswer: null,
-    gameStarted: false,
-    gameFinished: false
-  })
+  resetGame: () =>
+    set({
+      playerName: "",
+      difficulty: null,
+      questions: [],
+      currentQuestionIndex: 0,
+      score: 0,
+      hasAnswered: false,
+      selectedAnswer: null,
+      selectedCoordinates: null,
+      distanceFromTarget: null,
+      gameStarted: false,
+      gameFinished: false,
+    }),
 }));

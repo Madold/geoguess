@@ -101,6 +101,15 @@ export function GameScreen() {
                   </TooltipProvider>
                 </div>
 
+                <div className="my-6">
+                  <Button
+                    className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+                    disabled={hasAnswered}
+                  >
+                    Check Answer
+                  </Button>
+                </div>
+
                 <PlaceSelectorMap />
 
                 {/* <div className="space-y-3">

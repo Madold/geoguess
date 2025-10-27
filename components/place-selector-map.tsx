@@ -82,5 +82,5 @@ export const PlaceSelectorMap = ({ onMarkerPlaced }: Props) => {
     }
   }, [selectedCoordinates]);
 
-  return <div ref={mapDiv} className="w-full h-[600px] rounded-lg"></div>;
+  return <div ref={mapDiv} className="w-full h-[600px] rounded-lg my-3"></div>;
 };

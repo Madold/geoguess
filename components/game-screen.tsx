@@ -36,8 +36,8 @@ export function GameScreen() {
 
   if (!currentQuestion) return null;
 
-  // Verificar si la respuesta es correcta basándose en la distancia (40 km o menos)
-  const THRESHOLD_KM = 40;
+  // Verificar si la respuesta es correcta basándose en la distancia (200 km o menos)
+  const THRESHOLD_KM = 200;
   const isCorrect =
     hasAnswered &&
     distanceFromTarget !== null &&
@@ -120,27 +120,6 @@ export function GameScreen() {
                   </Button>
                 </div>
 
-                <PlaceSelectorMap onMarkerPlaced={setSelectedCoordinates} />
-
-                {!hasAnswered && (
-                  <p className="text-xs text-gray-500 mt-2">
-                    Haz clic en el mapa para seleccionar tu respuesta
-                  </p>
-                )}
-
-                {hasAnswered && (
-                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                      <span>Tu respuesta</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                      <span>Ubicación correcta</span>
-                    </div>
-                  </div>
-                )}
-
                 {hasAnswered && distanceFromTarget !== null && (
                   <div className="mt-6 space-y-4">
                     <div
@@ -171,8 +150,8 @@ export function GameScreen() {
                         </span>{" "}
                         de distancia
                         {isCorrect
-                          ? " (dentro del umbral de 40 km)"
-                          : " (fuera del umbral de 40 km)"}
+                          ? " (dentro del umbral de 200 km)"
+                          : " (fuera del umbral de 200 km)"}
                       </p>
                     </div>
 
@@ -187,6 +166,27 @@ export function GameScreen() {
                         ? "Siguiente Pregunta"
                         : "Ver Resultados"}
                     </Button>
+                  </div>
+                )}
+
+                <PlaceSelectorMap onMarkerPlaced={setSelectedCoordinates} />
+
+                {!hasAnswered && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    Haz clic en el mapa para seleccionar tu respuesta
+                  </p>
+                )}
+
+                {hasAnswered && (
+                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      <span>Tu respuesta</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <span>Ubicación correcta</span>
+                    </div>
                   </div>
                 )}
               </CardContent>

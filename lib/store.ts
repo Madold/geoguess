@@ -80,8 +80,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       longitude
     );
 
-    // Umbral de 40 km
-    const THRESHOLD_KM = 40;
+    // Umbral de 200 km
+    const THRESHOLD_KM = 200;
     const isCorrect = distance <= THRESHOLD_KM;
 
     set({

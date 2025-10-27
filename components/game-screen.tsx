@@ -13,6 +13,7 @@ import {
 import { useGameStore } from "@/lib/store";
 import { Lightbulb, Trophy, CheckCircle2, XCircle } from "lucide-react";
 import { PlaceSelectorMap } from "./place-selector-map";
+import { StreetView } from "./street-view";
 
 export function GameScreen() {
   const [showHint, setShowHint] = useState(false);
@@ -69,11 +70,12 @@ export function GameScreen() {
             className="relative rounded-xl overflow-hidden shadow-2xl bg-gray-900"
             style={{ height: "600px" }}
           >
-            <img
+            {/* <img
               src={currentQuestion.location.imageUrl}
               alt="Mystery location"
               className="w-full h-full object-cover"
-            />
+            /> */}
+            <StreetView />
             <div className="absolute top-4 left-4">
               <Badge className="bg-black/60 text-white border-white/20">
                 {difficulty?.toUpperCase()} MODE

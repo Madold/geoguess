@@ -7,8 +7,7 @@ import { GameScreen } from "@/components/game-screen";
 import { ResultsScreen } from "@/components/results-screen";
 import { useGameStore } from "@/lib/store";
 import mapboxgl from "mapbox-gl";
-mapboxgl.accessToken =
-  "pk.eyJ1IjoibWFya3Vzd2F0ZXIiLCJhIjoiY200ZjJzcjMwMDhtdjJqcTJkemd4bDY4MyJ9.dsrTOPOrlWzqEGr8GNFJXw";
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 export default function Home() {
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);

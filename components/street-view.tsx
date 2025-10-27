@@ -9,7 +9,7 @@ export const StreetView = () => {
   useEffect(() => {
     if (containerRef.current) {
       const viewerInstance = new Viewer({
-        accessToken: "MLY|24230513883289720|3e0dd11050794b7d7ac5847fd26478bd",
+        accessToken: process.env.NEXT_PUBLIC_MAPILLARY_TOKEN!,
         container: containerRef.current,
         imageId: "498763468214164",
       });

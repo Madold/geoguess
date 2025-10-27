@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/tooltip";
 import { useGameStore } from "@/lib/store";
 import { Lightbulb, Trophy, CheckCircle2, XCircle } from "lucide-react";
-import { Map } from "mapbox-gl";
+import { PlaceSelectorMap } from "./place-selector-map";
 
 export function GameScreen() {
   const [showHint, setShowHint] = useState(false);
-  const mapDiv = useRef<HTMLDivElement>(null);
+
   const {
     questions,
     currentQuestionIndex,
@@ -35,15 +35,6 @@ export function GameScreen() {
 
   const isCorrect =
     hasAnswered && selectedAnswer === currentQuestion.correctAnswer;
-
-  useLayoutEffect(() => {
-    const map = new Map({
-      container: mapDiv.current!,
-      style: "mapbox://styles/mapbox/standard",
-      center: [-75.879746, 8.74981],
-      zoom: 12,
-    });
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -110,7 +101,7 @@ export function GameScreen() {
                   </TooltipProvider>
                 </div>
 
-                <div ref={mapDiv} className="w-full h-[600px] rounded-lg"></div>
+                <PlaceSelectorMap />
 
                 {/* <div className="space-y-3">
                   {currentQuestion.options.map((option) => {

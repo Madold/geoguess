@@ -1060,7 +1060,7 @@
     "@supabase/node-fetch" "2.6.15"
     tslib "2.8.1"
 
-"@supabase/supabase-js@^2.58.0":
+"@supabase/supabase-js@^2.76.1":
   version "2.76.1"
   resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.76.1.tgz#648b13e1be940c41d17956c66bcbdba2aa7c58c5"
   integrity sha512-dYMh9EsTVXZ6WbQ0QmMGIhbXct5+x636tXXaaxUmwjj3kY1jyBTQU8QehxAIfjyRu1mWGV07hoYmTYakkxdSGQ==

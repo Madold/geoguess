@@ -19,12 +19,72 @@ import {
   Target,
   Trophy,
   Users,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 scroll-smooth">
+      {/* Navbar */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="bg-gradient-to-r from-blue-600 to-green-600 p-2 rounded-lg">
+                <Globe className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                GeoGuess
+              </span>
+            </Link>
+
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center space-x-8">
+              <a
+                href="#features"
+                className="text-gray-600 hover:text-gray-900 transition-colors scroll-smooth"
+              >
+                Features
+              </a>
+              <a
+                href="#how-to-play"
+                className="text-gray-600 hover:text-gray-900 transition-colors scroll-smooth"
+              >
+                How to Play
+              </a>
+              <a
+                href="#about"
+                className="text-gray-600 hover:text-gray-900 transition-colors scroll-smooth"
+              >
+                About
+              </a>
+            </div>
+
+            {/* Auth Buttons */}
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 px-4 border-gray-300 hover:bg-gray-50"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Login
+              </Button>
+              <Button
+                size="sm"
+                className="h-9 px-4 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Register
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="container mx-auto px-4 py-20">
@@ -85,7 +145,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white/50">
+      <section id="features" className="py-20 bg-white/50 scroll-mt-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -179,7 +239,7 @@ export default function Home() {
       </section>
 
       {/* How to Play Section */}
-      <section className="py-20">
+      <section id="how-to-play" className="py-20 scroll-mt-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -260,7 +320,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer id="about" className="bg-gray-900 text-white py-12 scroll-mt-20">
         <div className="container mx-auto px-4 text-center">
           <div className="space-y-4">
             <div className="flex justify-center">

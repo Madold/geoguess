@@ -6,7 +6,7 @@ interface Props {
   imageId?: string;
 }
 
-export const StreetView = ({ imageId = "498763468214164" }: Props) => {
+export const StreetView = ({ imageId = "1004351301404983" }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
 

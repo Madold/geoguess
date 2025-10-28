@@ -100,7 +100,7 @@ export function GameScreen() {
             style={{ height: "600px" }}
           >
             {/* <img
-              src={currentQuestion.location.imageUrl}
+              src={currentQuestion.location.imageId}
               alt="Mystery location"
               className="w-full h-full object-cover"
             /> */}

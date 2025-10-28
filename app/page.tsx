@@ -65,21 +65,25 @@ export default function Home() {
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 px-4 border-gray-300 hover:bg-gray-50"
-              >
-                <LogIn className="w-4 h-4 mr-2" />
-                Login
-              </Button>
-              <Button
-                size="sm"
-                className="h-9 px-4 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Register
-              </Button>
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 px-4 border-gray-300 hover:bg-gray-50"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button
+                  size="sm"
+                  className="h-9 px-4 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Register
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

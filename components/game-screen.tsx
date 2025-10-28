@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,12 +14,9 @@ import { useGameStore } from "@/lib/store";
 import { Lightbulb, Trophy, CheckCircle2, XCircle } from "lucide-react";
 import { PlaceSelectorMap } from "./place-selector-map";
 import { StreetView } from "./street-view";
-import { createBoundingBoxString } from "@/lib/create-bbox-string";
-import { ImagesResponse } from "@/api/mapillary/responses/images-response";
 
 export function GameScreen() {
   const [showHint, setShowHint] = useState(false);
-  const [imageId, setImageId] = useState<string | undefined>(undefined);
 
   const {
     questions,
@@ -37,32 +34,6 @@ export function GameScreen() {
   } = useGameStore();
 
   const currentQuestion = questions[currentQuestionIndex];
-
-  const getImageId = async () => {
-    try {
-      const res = await fetch(
-        `https://graph.mapillary.com/images?access_token=${
-          process.env.NEXT_PUBLIC_MAPILLARY_TOKEN
-        }&fields=id,geometry&bbox=${createBoundingBoxString(
-          currentQuestion.location.latitude,
-          currentQuestion.location.longitude
-        )}&limit=3`
-      );
-      const response = (await res.json()) as { data: ImagesResponse[] };
-      console.log(response);
-
-      // Establecer el primer imageId del arreglo
-      if (response.data && response.data.length > 0) {
-        setImageId(response.data[0].id);
-      }
-    } catch (error) {
-      console.error("Error fetching image:", error);
-    }
-  };
-
-  useEffect(() => {
-    getImageId();
-  }, [currentQuestion]);
 
   if (!currentQuestion) return null;
 
@@ -99,12 +70,7 @@ export function GameScreen() {
             className="relative rounded-xl overflow-hidden shadow-2xl bg-gray-900"
             style={{ height: "600px" }}
           >
-            {/* <img
-              src={currentQuestion.location.imageId}
-              alt="Mystery location"
-              className="w-full h-full object-cover"
-            /> */}
-            <StreetView imageId={imageId} />
+            <StreetView imageId={currentQuestion.location.imageId} />
             <div className="absolute top-4 left-4">
               <Badge className="bg-black/60 text-white border-white/20">
                 {difficulty?.toUpperCase()} MODE

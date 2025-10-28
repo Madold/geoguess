@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { login, signInWithGoogle } from "@/actions/auth";
 
 // Esquema de validación con Zod
 const loginSchema = z.object({
@@ -23,6 +25,7 @@ export function useLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const {
     register,
@@ -37,16 +40,37 @@ export function useLogin() {
     setError("");
 
     try {
-      // Simular llamada a API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await login(data.email, data.password);
 
-      // Aquí iría la lógica real de autenticación
-      console.log("Login data:", data);
-
-      // Redirigir al dashboard después del login exitoso
-      // router.push("/dashboard");
+      if (result.success) {
+        // Redirigir al dashboard después del login exitoso
+        router.push("/dashboard");
+      } else {
+        setError(
+          result.errorMessage ||
+            "Error al iniciar sesión. Verifica tus credenciales."
+        );
+      }
     } catch (err) {
       setError("Error al iniciar sesión. Verifica tus credenciales.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await signInWithGoogle();
+
+      if (!result.success) {
+        setError(result.errorMessage || "Error al iniciar sesión con Google.");
+      }
+      // La redirección se maneja automáticamente por Supabase
+    } catch (err) {
+      setError("Error al iniciar sesión con Google.");
     } finally {
       setIsLoading(false);
     }
@@ -70,5 +94,6 @@ export function useLogin() {
 
     // Acciones
     togglePasswordVisibility,
+    handleGoogleLogin,
   };
 }

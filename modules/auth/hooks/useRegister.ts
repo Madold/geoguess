@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { signup, signInWithGoogle } from "@/actions/auth";
 
 // Esquema de validación con Zod
 const registerSchema = z
@@ -44,6 +46,7 @@ export function useRegister() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -62,18 +65,38 @@ export function useRegister() {
     setSuccess(false);
 
     try {
-      // Simular llamada a API
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const result = await signup(data.email, data.password, data.username);
 
-      // Aquí iría la lógica real de registro
-      console.log("Register data:", data);
-
-      setSuccess(true);
-
-      // Redirigir al dashboard después del registro exitoso
-      // router.push("/dashboard");
+      if (result.success) {
+        setSuccess(true);
+        // Opcional: redirigir automáticamente después de un tiempo
+        // setTimeout(() => router.push("/dashboard"), 2000);
+      } else {
+        setError(
+          result.errorMessage || "Error al crear la cuenta. Inténtalo de nuevo."
+        );
+      }
     } catch (err) {
+      console.error("Error creating user:", err);
       setError("Error al crear la cuenta. Inténtalo de nuevo.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await signInWithGoogle();
+
+      if (!result.success) {
+        setError(result.errorMessage || "Error al iniciar sesión con Google.");
+      }
+      // La redirección se maneja automáticamente por Supabase
+    } catch (err) {
+      setError("Error al iniciar sesión con Google.");
     } finally {
       setIsLoading(false);
     }
@@ -105,5 +128,6 @@ export function useRegister() {
     // Acciones
     togglePasswordVisibility,
     toggleConfirmPasswordVisibility,
+    handleGoogleLogin,
   };
 }

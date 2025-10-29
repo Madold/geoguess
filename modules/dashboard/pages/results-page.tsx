@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGameStore } from "@/lib/store";
@@ -25,6 +25,7 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [gameSaved, setGameSaved] = useState(false);
   const [savedGameData, setSavedGameData] = useState<any>(null);
+  const hasSaved = useRef(false);
 
   const totalQuestions = questions.length;
   const percentage = Math.round((score / totalQuestions) * 100);
@@ -32,8 +33,10 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
   // Guardar el juego automáticamente al montar el componente
   useEffect(() => {
     const saveGame = async () => {
-      if (gameSaved) return; // Evitar guardar múltiples veces
+      // Evitar guardar múltiples veces usando ref (protege contra Strict Mode)
+      if (hasSaved.current) return;
 
+      hasSaved.current = true;
       setIsSaving(true);
       try {
         const response = await fetch("/api/game/save", {
@@ -66,6 +69,7 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
         });
       } catch (error) {
         console.error("Error al guardar el juego:", error);
+        hasSaved.current = false; // Permitir reintentar si hay error
         toast({
           title: "Error",
           description:
@@ -78,16 +82,8 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
     };
 
     saveGame();
-  }, [
-    difficulty,
-    score,
-    totalQuestions,
-    totalGameTime,
-    questionResults,
-    playerName,
-    gameSaved,
-    toast,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo ejecutar una vez al montar
 
   // Función para formatear el tiempo
   const formatTime = (seconds: number) => {

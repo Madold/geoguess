@@ -320,7 +320,7 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
         </Card>
 
         {/* Navigation Modules */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <CardContent className="p-6 text-center">
               <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
@@ -365,22 +365,6 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
               </p>
               <Button variant="outline" size="sm" className="w-full">
                 View History {/* "Ver Historial" translated */}
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <MessageSquare className="w-12 h-12 text-purple-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Feedback
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Report issues or suggest improvements {/* Translated text */}
-              </p>
-              <Button variant="outline" size="sm" className="w-full">
-                Send Feedback {/* "Enviar Feedback" translated */}
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>

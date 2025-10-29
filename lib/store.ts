@@ -2,6 +2,16 @@ import { create } from "zustand";
 import { type Difficulty, type Question, generateQuestions } from "./game-data";
 import { calculateHaversineDistance } from "./utils";
 
+export interface QuestionResult {
+  locationName: string;
+  country: string;
+  distance: number;
+  isCorrect: boolean;
+  timeSpent: number;
+  userCoordinates: { lng: number; lat: number } | null;
+  correctCoordinates: { lng: number; lat: number };
+}
+
 interface GameState {
   playerName: string;
   difficulty: Difficulty | null;
@@ -14,6 +24,10 @@ interface GameState {
   distanceFromTarget: number | null;
   gameStarted: boolean;
   gameFinished: boolean;
+  questionResults: QuestionResult[];
+  gameStartTime: number | null;
+  questionStartTime: number | null;
+  totalGameTime: number;
 
   setPlayerName: (name: string) => void;
   setDifficulty: (difficulty: Difficulty) => void;
@@ -36,6 +50,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   distanceFromTarget: null,
   gameStarted: false,
   gameFinished: false,
+  questionResults: [],
+  gameStartTime: null,
+  questionStartTime: null,
+  totalGameTime: 0,
 
   setPlayerName: (name: string) => set({ playerName: name }),
 
@@ -56,6 +74,10 @@ export const useGameStore = create<GameState>((set, get) => ({
       distanceFromTarget: null,
       gameStarted: true,
       gameFinished: false,
+      questionResults: [],
+      gameStartTime: Date.now(),
+      questionStartTime: Date.now(),
+      totalGameTime: 0,
     });
   },
 
@@ -64,8 +86,14 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   checkAnswer: () => {
-    const { questions, currentQuestionIndex, score, selectedCoordinates } =
-      get();
+    const {
+      questions,
+      currentQuestionIndex,
+      score,
+      selectedCoordinates,
+      questionResults,
+      questionStartTime,
+    } = get();
 
     if (!selectedCoordinates) return;
 
@@ -84,20 +112,44 @@ export const useGameStore = create<GameState>((set, get) => ({
     const THRESHOLD_KM = 200;
     const isCorrect = distance <= THRESHOLD_KM;
 
+    // Calcular tiempo transcurrido en esta pregunta
+    const timeSpent = questionStartTime
+      ? Math.floor((Date.now() - questionStartTime) / 1000)
+      : 0;
+
+    // Crear resultado de la pregunta
+    const questionResult: QuestionResult = {
+      locationName: currentQuestion.location.name,
+      country: currentQuestion.location.country,
+      distance,
+      isCorrect,
+      timeSpent,
+      userCoordinates: selectedCoordinates,
+      correctCoordinates: {
+        lng: longitude,
+        lat: latitude,
+      },
+    };
+
     set({
       selectedAnswer: currentQuestion.location.name,
       distanceFromTarget: distance,
       hasAnswered: true,
       score: isCorrect ? score + 1 : score,
+      questionResults: [...questionResults, questionResult],
     });
   },
 
   nextQuestion: () => {
-    const { currentQuestionIndex, questions } = get();
+    const { currentQuestionIndex, questions, gameStartTime } = get();
     const nextIndex = currentQuestionIndex + 1;
 
     if (nextIndex >= questions.length) {
-      set({ gameFinished: true });
+      // Calcular tiempo total del juego
+      const totalGameTime = gameStartTime
+        ? Math.floor((Date.now() - gameStartTime) / 1000)
+        : 0;
+      set({ gameFinished: true, totalGameTime });
     } else {
       set({
         currentQuestionIndex: nextIndex,
@@ -105,6 +157,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         selectedAnswer: null,
         selectedCoordinates: null,
         distanceFromTarget: null,
+        questionStartTime: Date.now(),
       });
     }
   },
@@ -122,5 +175,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       distanceFromTarget: null,
       gameStarted: false,
       gameFinished: false,
+      questionResults: [],
+      gameStartTime: null,
+      questionStartTime: null,
+      totalGameTime: 0,
     }),
 }));

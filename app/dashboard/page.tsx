@@ -2,47 +2,37 @@
 
 import { useState } from "react";
 import { WelcomeScreen } from "@/components/welcome-screen";
-import { DifficultyModal } from "@/components/difficulty-modal";
-import { GameScreen } from "@/components/game-screen";
-import { ResultsScreen } from "@/components/results-screen";
+import { DashboardMain } from "@/components/dashboard-main";
 import { useGameStore } from "@/lib/store";
 import mapboxgl from "mapbox-gl";
+import { GamePage } from "@/modules/dashboard/pages/game-page";
+import { ResultsPage } from "@/modules/dashboard/pages/results-page";
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 export default function Home() {
-  const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const { gameStarted, gameFinished, startGame, playerName } = useGameStore();
 
-  const handleWelcomeNext = () => {
-    setShowDifficultyModal(true);
-  };
-
-  const handleDifficultyConfirm = () => {
-    setShowDifficultyModal(false);
+  const handleStartGame = () => {
     startGame();
   };
 
   const handlePlayAgain = () => {
-    setShowDifficultyModal(true);
+    startGame();
   };
 
+  // Si no hay nombre de jugador, mostrar pantalla de bienvenida
+  if (!playerName) {
+    return <WelcomeScreen onNext={() => {}} />;
+  }
+
   if (gameFinished) {
-    return <ResultsScreen onPlayAgain={handlePlayAgain} />;
+    return <ResultsPage onPlayAgain={handlePlayAgain} />;
   }
 
   if (gameStarted) {
-    return <GameScreen />;
+    return <GamePage />;
   }
 
-  return (
-    <>
-      <WelcomeScreen onNext={handleWelcomeNext} />
-      {playerName && (
-        <DifficultyModal
-          open={showDifficultyModal}
-          onConfirm={handleDifficultyConfirm}
-        />
-      )}
-    </>
-  );
+  // Mostrar dashboard principal
+  return <DashboardMain onStartGame={handleStartGame} />;
 }

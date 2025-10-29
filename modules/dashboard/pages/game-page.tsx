@@ -24,10 +24,10 @@ import {
   RotateCcw,
   Loader2,
 } from "lucide-react";
-import { PlaceSelectorMap } from "./place-selector-map";
-import { StreetView } from "./street-view";
+import { PlaceSelectorMap } from "@/components/place-selector-map";
+import { StreetView } from "@/components/street-view";
 
-export function GameScreen() {
+export function GamePage() {
   const [showHint, setShowHint] = useState(false);
   const [isCheckingAnswer, setIsCheckingAnswer] = useState(false);
   const [showAnswerAnimation, setShowAnswerAnimation] = useState(false);

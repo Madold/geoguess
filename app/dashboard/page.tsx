@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DashboardMain } from "@/components/dashboard-main";
+import { DashboardMain } from "@/modules/dashboard/pages/dashboard-main";
 import { useGameStore } from "@/lib/store";
 import mapboxgl from "mapbox-gl";
 import { GamePage } from "@/modules/dashboard/pages/game-page";

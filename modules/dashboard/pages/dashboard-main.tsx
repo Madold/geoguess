@@ -31,7 +31,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useGameStore } from "@/lib/store";
-import { DifficultyModal } from "@/components/difficulty-modal";
+import { DifficultyModal } from "@/modules/shared/components/difficulty-modal";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 

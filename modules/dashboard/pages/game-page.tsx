@@ -24,8 +24,8 @@ import {
   RotateCcw,
   Loader2,
 } from "lucide-react";
-import { PlaceSelectorMap } from "@/components/place-selector-map";
-import { StreetView } from "@/components/street-view";
+import { PlaceSelectorMap } from "@/modules/shared/components/place-selector-map";
+import { StreetView } from "@/modules/shared/components/street-view";
 
 export function GamePage() {
   const [showHint, setShowHint] = useState(false);

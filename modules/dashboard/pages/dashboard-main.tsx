@@ -347,7 +347,12 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
               <p className="text-sm text-gray-600 mb-4">
                 Detailed analysis of your progress {/* Translated text */}
               </p>
-              <Button variant="outline" size="sm" className="w-full">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => router.push("/dashboard/statistics")}
+              >
                 View Statistics {/* "Ver Estadísticas" translated */}
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>

@@ -32,23 +32,27 @@ import {
 } from "lucide-react";
 import { useGameStore } from "@/lib/store";
 import { DifficultyModal } from "@/components/difficulty-modal";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface DashboardMainProps {
   onStartGame: () => void;
+  userName: string;
 }
 
-export function DashboardMain({ onStartGame }: DashboardMainProps) {
+export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
-  const { playerName } = useGameStore();
+  const router = useRouter();
 
-  // Datos de ejemplo - en el futuro vendrán de la base de datos
   // Sample Data - will come from the database in the future
   const userStats = {
     bestScore: 24990,
     averagePrecision: 15.5,
     gamesPlayed: 42,
     globalRank: 452,
+    // Renombrar 'regionalStrengths' para seguir convenciones de código en inglés (opcional, pero recomendado)
     regionalStrengths: [
+      // Cambiar 'region' y traducir valores
       { region: "Europe", accuracy: 85, color: "bg-blue-500" },
       { region: "North America", accuracy: 72, color: "bg-green-500" },
       { region: "Asia", accuracy: 68, color: "bg-purple-500" },
@@ -61,7 +65,6 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
   };
 
   const handleQuickGame = () => {
-    // Iniciar partida rápida con configuración predeterminada
     // Start quick game with default settings
     onStartGame();
   };
@@ -71,9 +74,14 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
     onStartGame();
   };
 
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {/* Header con perfil de usuario */}
       {/* Header with user profile */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4">
@@ -88,14 +96,12 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
               </span>
             </div>
 
-            {/* Perfil de usuario */}
             {/* User Profile */}
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm text-gray-600">Hello,</p>
-                <p className="font-semibold text-gray-900">
-                  {playerName || "Player"}!
-                </p>
+                <p className="text-sm text-gray-600">Hello,</p>{" "}
+                {/* "¡Hola," translated to "Hello," */}
+                <p className="font-semibold text-gray-900">{userName}!</p>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -107,9 +113,10 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                       <AvatarImage
                         src="/placeholder-avatar.jpg"
                         alt="Profile"
-                      />
-                      <AvatarFallback>
-                        <User className="h-5 w-5" />
+                      />{" "}
+                      {/* "Perfil" translated to "Profile" */}
+                      <AvatarFallback className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
+                        {userName.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -117,29 +124,30 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <div className="flex flex-col space-y-1 p-2">
                     <p className="text-sm font-medium leading-none">
-                      {playerName || "Player"}
+                      {userName}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      GeoGuess Player
+                      GeoGuess Player {/* "Jugador de GeoGuess" translated */}
                     </p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile & Settings</span>
+                    <span>Profile & Settings</span>{" "}
+                    {/* "Perfil y Configuración" translated */}
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <BarChart3 className="mr-2 h-4 w-4" />
-                    <span>My Stats</span>
+                    <span>My Stats</span> {/* "Mis Estadísticas" translated */}
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                    <span>Settings</span> {/* "Configuración" translated */}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log Out</span>
+                    <span>Log Out</span> {/* "Cerrar Sesión" translated */}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -149,17 +157,16 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
       </header>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Sección de acción principal */}
         {/* Main Action Section */}
         <div className="text-center mb-12">
           <div className="space-y-6">
             <div className="space-y-2">
               <h1 className="text-4xl font-bold text-gray-900">
-                It's time to explore!
+                It's time to explore! {/* "¡Es hora de explorar!" translated */}
               </h1>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Showcase your geography knowledge and discover incredible places
-                around the world.
+                Show off your geographical knowledge and discover amazing places
+                around the world. {/* Translated text */}
               </p>
             </div>
 
@@ -170,7 +177,7 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 className="h-16 px-12 text-xl font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-xl transform hover:scale-105 transition-all duration-200"
               >
                 <Play className="w-6 h-6 mr-3" />
-                New Game
+                New Game {/* "Nueva Partida" translated */}
                 <ChevronRight className="w-6 h-6 ml-3" />
               </Button>
               <Button
@@ -180,16 +187,14 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 className="h-16 px-8 text-lg font-semibold border-2 hover:bg-gray-50"
               >
                 <Zap className="w-5 h-5 mr-2" />
-                Quick Game
+                Quick Game {/* "Partida Rápida" translated */}
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Dashboard estadístico */}
         {/* Statistics Dashboard */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {/* Mi Récord */}
           {/* My High Score */}
           <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
             <CardHeader className="pb-3">
@@ -199,7 +204,7 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                   variant="secondary"
                   className="bg-yellow-100 text-yellow-800"
                 >
-                  Record
+                  High Score {/* "Récord" translated */}
                 </Badge>
               </div>
             </CardHeader>
@@ -208,12 +213,12 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 <p className="text-3xl font-bold text-gray-900">
                   {userStats.bestScore.toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-600">max points</p>
+                <p className="text-sm text-gray-600">maximum points</p>{" "}
+                {/* "puntos máximos" translated */}
               </div>
             </CardContent>
           </Card>
 
-          {/* Mi Precisión */}
           {/* My Accuracy */}
           <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
             <CardHeader className="pb-3">
@@ -223,7 +228,7 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                   variant="secondary"
                   className="bg-green-100 text-green-800"
                 >
-                  Accuracy
+                  Accuracy {/* "Precisión" translated */}
                 </Badge>
               </div>
             </CardHeader>
@@ -232,12 +237,12 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 <p className="text-3xl font-bold text-gray-900">
                   {userStats.averagePrecision} km
                 </p>
-                <p className="text-sm text-gray-600">average error</p>
+                <p className="text-sm text-gray-600">average error</p>{" "}
+                {/* "error promedio" translated */}
               </div>
             </CardContent>
           </Card>
 
-          {/* Partidas Jugadas */}
           {/* Games Played */}
           <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
             <CardHeader className="pb-3">
@@ -247,7 +252,7 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                   variant="secondary"
                   className="bg-blue-100 text-blue-800"
                 >
-                  Activity
+                  Activity {/* "Actividad" translated */}
                 </Badge>
               </div>
             </CardHeader>
@@ -256,12 +261,12 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 <p className="text-3xl font-bold text-gray-900">
                   {userStats.gamesPlayed}
                 </p>
-                <p className="text-sm text-gray-600">games played</p>
+                <p className="text-sm text-gray-600">games played</p>{" "}
+                {/* "partidas jugadas" translated */}
               </div>
             </CardContent>
           </Card>
 
-          {/* Ranking Global */}
           {/* Global Ranking */}
           <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
             <CardHeader className="pb-3">
@@ -280,19 +285,19 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 <p className="text-3xl font-bold text-gray-900">
                   #{userStats.globalRank}
                 </p>
-                <p className="text-sm text-gray-600">global position</p>
+                <p className="text-sm text-gray-600">global position</p>{" "}
+                {/* "posición global" translated */}
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Fortalezas regionales */}
         {/* Regional Strengths */}
         <Card className="shadow-lg mb-12">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-blue-600" />
-              Regional Strengths
+              Regional Strengths {/* "Fortalezas Regionales" translated */}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -314,20 +319,20 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
           </CardContent>
         </Card>
 
-        {/* Módulos de navegación */}
         {/* Navigation Modules */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <CardContent className="p-6 text-center">
               <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Global Rankings
+                Global Rankings {/* "Rankings Globales" translated */}
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                See where you stand in the world rankings
+                See where you stand in the world rankings{" "}
+                {/* Translated text */}
               </p>
               <Button variant="outline" size="sm" className="w-full">
-                View Rankings
+                View Rankings {/* "Ver Rankings" translated */}
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>
@@ -337,13 +342,13 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
             <CardContent className="p-6 text-center">
               <BarChart3 className="w-12 h-12 text-blue-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                My Stats
+                My Statistics {/* "Mis Estadísticas" translated */}
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                Detailed analysis of your progress
+                Detailed analysis of your progress {/* Translated text */}
               </p>
               <Button variant="outline" size="sm" className="w-full">
-                View Statistics
+                View Statistics {/* "Ver Estadísticas" translated */}
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>
@@ -353,13 +358,13 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
             <CardContent className="p-6 text-center">
               <History className="w-12 h-12 text-green-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Game History
+                Game History {/* "Historial de Partidas" translated */}
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                Review your previous games
+                Review your previous games {/* Translated text */}
               </p>
               <Button variant="outline" size="sm" className="w-full">
-                View History
+                View History {/* "Ver Historial" translated */}
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>
@@ -372,10 +377,10 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
                 Feedback
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                Report issues or suggest improvements
+                Report issues or suggest improvements {/* Translated text */}
               </p>
               <Button variant="outline" size="sm" className="w-full">
-                Send Feedback
+                Send Feedback {/* "Enviar Feedback" translated */}
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>
@@ -383,7 +388,6 @@ export function DashboardMain({ onStartGame }: DashboardMainProps) {
         </div>
       </div>
 
-      {/* Modal de dificultad */}
       {/* Difficulty Modal */}
       <DifficultyModal
         open={showDifficultyModal}

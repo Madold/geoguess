@@ -363,7 +363,12 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
               <p className="text-sm text-gray-600 mb-4">
                 Review your previous games {/* Translated text */}
               </p>
-              <Button variant="outline" size="sm" className="w-full">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => router.push("/dashboard/history")}
+              >
                 View History {/* "Ver Historial" translated */}
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>

@@ -32,7 +32,7 @@ export default function Home() {
       }
 
       const name =
-        user.user_metadata?.full_name ||
+        user.user_metadata?.username ||
         user.user_metadata?.name ||
         user.email?.split("@")[0] ||
         "Player";

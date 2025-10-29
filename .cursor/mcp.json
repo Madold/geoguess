@@ -1,0 +1,7 @@
+{
+    "mcpServers": {
+      "supabase": {
+        "url": "https://mcp.supabase.com/mcp?project_ref=mthyxcgtlxfnlacapvwh&features=database%2Cdocs%2Caccount%2Cdevelopment%2Cbranching%2Cstorage"
+      }
+    }
+  }

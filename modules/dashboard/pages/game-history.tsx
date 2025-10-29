@@ -37,29 +37,11 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-interface GameHistoryItem {
-  id: number;
-  game_date: string;
-  final_score: number;
-  game_mode_name: string;
-  difficulty_level: string;
-  total_time_seconds: number;
-  detailed_statistics?: {
-    accuracy?: number;
-    questions?: Array<{
-      country?: string;
-      locationName?: string;
-    }>;
-  };
-}
-
-interface Statistics {
-  totalGames: number;
-  averageScore: number;
-  bestScore: number;
-  averageAccuracy: number;
-}
+import {
+  GameHistoryItem,
+  Statistics,
+  GameHistoryResponse,
+} from "@/modules/dashboard/types";
 
 interface GameHistoryPageProps {
   onBack: () => void;

@@ -1,0 +1,599 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  XAxis,
+  YAxis,
+  Cell,
+} from "recharts";
+import { Award, Globe2, MapPin, Trophy } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+type RankingType = "global" | "regional" | "weekly" | "monthly";
+
+interface RankingEntry {
+  id: number;
+  userId: string;
+  userName: string;
+  rankingType: RankingType;
+  position: number;
+  score: number;
+  period?: string | null;
+  region?: string | null;
+}
+
+const MOCK_RANKING: RankingEntry[] = [
+  {
+    id: 1,
+    userId: "u1",
+    userName: "Ana",
+    rankingType: "global",
+    position: 1,
+    score: 98765,
+    period: null,
+    region: null,
+  },
+  {
+    id: 2,
+    userId: "u2",
+    userName: "Luis",
+    rankingType: "global",
+    position: 2,
+    score: 95600,
+    period: null,
+    region: null,
+  },
+  {
+    id: 3,
+    userId: "u3",
+    userName: "Carla",
+    rankingType: "global",
+    position: 3,
+    score: 94010,
+    period: null,
+    region: null,
+  },
+  {
+    id: 4,
+    userId: "u4",
+    userName: "Diego",
+    rankingType: "global",
+    position: 4,
+    score: 90120,
+    period: null,
+    region: null,
+  },
+  {
+    id: 5,
+    userId: "u5",
+    userName: "Sofía",
+    rankingType: "global",
+    position: 5,
+    score: 88700,
+    period: null,
+    region: null,
+  },
+  // Regional
+  {
+    id: 6,
+    userId: "u6",
+    userName: "Pablo",
+    rankingType: "regional",
+    position: 1,
+    score: 81230,
+    period: null,
+    region: "Europa",
+  },
+  {
+    id: 7,
+    userId: "u7",
+    userName: "Elena",
+    rankingType: "regional",
+    position: 2,
+    score: 79990,
+    period: null,
+    region: "Europa",
+  },
+  {
+    id: 8,
+    userId: "u8",
+    userName: "María",
+    rankingType: "regional",
+    position: 1,
+    score: 83450,
+    period: null,
+    region: "LatAm",
+  },
+  {
+    id: 9,
+    userId: "u9",
+    userName: "Jorge",
+    rankingType: "regional",
+    position: 2,
+    score: 82010,
+    period: null,
+    region: "LatAm",
+  },
+  // Weekly
+  {
+    id: 10,
+    userId: "u10",
+    userName: "Valeria",
+    rankingType: "weekly",
+    position: 1,
+    score: 22100,
+    period: "2025-W44",
+    region: null,
+  },
+  {
+    id: 11,
+    userId: "u11",
+    userName: "Tomás",
+    rankingType: "weekly",
+    position: 2,
+    score: 20950,
+    period: "2025-W44",
+    region: null,
+  },
+  {
+    id: 12,
+    userId: "u12",
+    userName: "Irene",
+    rankingType: "weekly",
+    position: 3,
+    score: 20540,
+    period: "2025-W44",
+    region: null,
+  },
+  // Monthly
+  {
+    id: 13,
+    userId: "u13",
+    userName: "Julián",
+    rankingType: "monthly",
+    position: 1,
+    score: 70210,
+    period: "2025-10",
+    region: null,
+  },
+  {
+    id: 14,
+    userId: "u14",
+    userName: "Marta",
+    rankingType: "monthly",
+    position: 2,
+    score: 68800,
+    period: "2025-10",
+    region: null,
+  },
+  {
+    id: 15,
+    userId: "u15",
+    userName: "Rosa",
+    rankingType: "monthly",
+    position: 3,
+    score: 67110,
+    period: "2025-10",
+    region: null,
+  },
+];
+
+const REGIONS = [
+  "Global",
+  "Europa",
+  "LatAm",
+  "Norteamérica",
+  "Asia",
+  "África",
+  "Oceanía",
+];
+
+export const RankingPage = () => {
+  const router = useRouter();
+  const [rankingType, setRankingType] = useState<RankingType>("global");
+  const [region, setRegion] = useState<string>("Global");
+  const [period, setPeriod] = useState<string>("Actual");
+
+  const filtered = useMemo(() => {
+    let list = MOCK_RANKING.filter((r) => r.rankingType === rankingType);
+    if (rankingType === "regional") {
+      list = list.filter((r) =>
+        region === "Global" ? true : r.region === region
+      );
+    }
+    if (rankingType === "weekly" || rankingType === "monthly") {
+      // En mock usamos el primer periodo disponible si no es "Actual"
+      list = list.filter((r) =>
+        period === "Actual" ? true : r.period === period
+      );
+    }
+    return list.sort((a, b) => a.position - b.position).slice(0, 10);
+  }, [rankingType, region, period]);
+
+  const topBarData = useMemo(
+    () =>
+      filtered.map((e) => ({
+        name: `#${e.position} ${e.userName}`,
+        score: e.score,
+      })),
+    [filtered]
+  );
+
+  const regionPie = useMemo(() => {
+    const counts: Record<string, number> = {};
+    MOCK_RANKING.filter((r) => r.rankingType === "regional").forEach((r) => {
+      const key = r.region || "Otro";
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    const colors = [
+      "#0284c7",
+      "#22c55e",
+      "#f59e0b",
+      "#ef4444",
+      "#8b5cf6",
+      "#14b8a6",
+      "#e11d48",
+    ];
+    return Object.entries(counts).map(([name, value], idx) => ({
+      name,
+      value,
+      color: colors[idx % colors.length],
+    }));
+  }, []);
+
+  const trendData = useMemo(() => {
+    return [
+      { label: "W41", score: 18000 },
+      { label: "W42", score: 19550 },
+      { label: "W43", score: 20420 },
+      { label: "W44", score: 22100 },
+    ];
+  }, []);
+
+  const difficultyConfig = useMemo(() => {
+    const config: Record<string, { label: string }> = {};
+    regionPie.forEach((d) => {
+      config[d.name] = { label: d.name };
+    });
+    return config;
+  }, [regionPie]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mb-4">
+          <Button
+            variant="ghost"
+            className="px-2 h-9"
+            onClick={() => router.back()}
+          >
+            Volver
+          </Button>
+        </div>
+
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900">Ranking</h1>
+          <p className="text-gray-600 mt-2">
+            Top jugadores por tipo, período y región
+          </p>
+        </div>
+
+        {/* Filtros */}
+        <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-8">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={rankingType === "global" ? "default" : "secondary"}
+              onClick={() => setRankingType("global")}
+            >
+              Global
+            </Button>
+            <Button
+              variant={rankingType === "regional" ? "default" : "secondary"}
+              onClick={() => setRankingType("regional")}
+            >
+              Regional
+            </Button>
+            <Button
+              variant={rankingType === "weekly" ? "default" : "secondary"}
+              onClick={() => setRankingType("weekly")}
+            >
+              Semanal
+            </Button>
+            <Button
+              variant={rankingType === "monthly" ? "default" : "secondary"}
+              onClick={() => setRankingType("monthly")}
+            >
+              Mensual
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            {rankingType === "regional" && (
+              <Select value={region} onValueChange={setRegion}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Región" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REGIONS.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {r}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {(rankingType === "weekly" || rankingType === "monthly") && (
+              <Select value={period} onValueChange={setPeriod}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Período" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Actual">Actual</SelectItem>
+                  <SelectItem value="2025-W44">2025-W44</SelectItem>
+                  <SelectItem value="2025-10">2025-10</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </div>
+
+        {/* Resumen superior */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <Trophy className="w-8 h-8 text-yellow-500" />
+                <Badge
+                  variant="secondary"
+                  className="bg-yellow-100 text-yellow-800"
+                >
+                  Top 1
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-gray-900">
+                {filtered[0]?.userName ?? "-"}
+              </p>
+              <p className="text-sm text-gray-600">
+                {filtered[0]?.score?.toLocaleString() ?? ""} pts
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <Award className="w-8 h-8 text-green-500" />
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800"
+                >
+                  Top 3 Promedio
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-gray-900">
+                {filtered.length
+                  ? Math.round(
+                      filtered.slice(0, 3).reduce((a, b) => a + b.score, 0) /
+                        Math.min(3, filtered.length)
+                    ).toLocaleString()
+                  : 0}
+              </p>
+              <p className="text-sm text-gray-600">puntos</p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <Globe2 className="w-8 h-8 text-blue-500" />
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800"
+                >
+                  Tipo
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-gray-900 capitalize">
+                {rankingType}
+              </p>
+              <p className="text-sm text-gray-600">vista actual</p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <MapPin className="w-8 h-8 text-purple-500" />
+                <Badge
+                  variant="secondary"
+                  className="bg-purple-100 text-purple-800"
+                >
+                  Ámbito
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-gray-900">
+                {rankingType === "regional" ? region : "Global"}
+              </p>
+              <p className="text-sm text-gray-600">
+                {rankingType === "weekly" || rankingType === "monthly"
+                  ? period === "Actual"
+                    ? "Período actual"
+                    : period
+                  : "sin período"}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Gráficas */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-12">
+          <Card className="shadow-lg lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Top 10 por puntuación</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                config={{ score: { label: "Puntuación", color: "#22c55e" } }}
+                className="h-72"
+              >
+                <BarChart data={topBarData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="name"
+                    tickLine={false}
+                    axisLine={false}
+                    hide
+                  />
+                  <YAxis tickLine={false} axisLine={false} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar
+                    dataKey="score"
+                    fill="var(--color-score)"
+                    radius={[6, 6, 0, 0]}
+                  />
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle>Distribución Regional (mock)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={difficultyConfig} className="h-72">
+                <PieChart>
+                  <Pie
+                    data={regionPie}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={60}
+                    outerRadius={90}
+                  >
+                    {regionPie.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <ChartLegend
+                    content={<ChartLegendContent nameKey="name" />}
+                  />
+                </PieChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tendencia semanal (mock) */}
+        <Card className="shadow-lg mb-12">
+          <CardHeader>
+            <CardTitle>Tendencia Semanal (mock)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{ score: { label: "Puntuación", color: "#16a34a" } }}
+              className="h-72"
+            >
+              <LineChart data={trendData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke="var(--color-score)"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        {/* Tabla */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Tabla de posiciones</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>#</TableHead>
+                    <TableHead>Jugador</TableHead>
+                    <TableHead>Puntaje</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Período</TableHead>
+                    <TableHead>Región</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((e) => (
+                    <TableRow key={e.id}>
+                      <TableCell className="font-medium">
+                        {e.position}
+                      </TableCell>
+                      <TableCell>{e.userName}</TableCell>
+                      <TableCell>{e.score.toLocaleString()}</TableCell>
+                      <TableCell className="capitalize">
+                        {e.rankingType}
+                      </TableCell>
+                      <TableCell>{e.period ?? "-"}</TableCell>
+                      <TableCell>
+                        {e.region ??
+                          (rankingType === "regional" ? "-" : "Global")}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default RankingPage;

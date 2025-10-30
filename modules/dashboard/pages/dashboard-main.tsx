@@ -331,8 +331,13 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
                 See where you stand in the world rankings{" "}
                 {/* Translated text */}
               </p>
-              <Button variant="outline" size="sm" className="w-full">
-                View Rankings {/* "Ver Rankings" translated */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => router.push("/dashboard/ranking")}
+              >
+                View Rankings
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>

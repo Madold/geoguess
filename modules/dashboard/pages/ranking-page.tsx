@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { Award, Globe2, MapPin, Trophy } from "lucide-react";
+import { Award, Globe2, MapPin, Trophy, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type RankingType = "global" | "regional" | "weekly" | "monthly";
@@ -225,9 +225,63 @@ export const RankingPage = () => {
   const [rankingType, setRankingType] = useState<RankingType>("global");
   const [region, setRegion] = useState<string>("Global");
   const [period, setPeriod] = useState<string>("Actual");
+  const [entries, setEntries] = useState<RankingEntry[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const fetchRanking = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const params = new URLSearchParams();
+        params.set("type", rankingType);
+        if (rankingType === "regional" && region && region !== "Global") {
+          params.set("region", region);
+        }
+        if (
+          (rankingType === "weekly" || rankingType === "monthly") &&
+          period &&
+          period !== "Actual"
+        ) {
+          params.set("period", period);
+        }
+        params.set("limit", "50");
+
+        const res = await fetch(`/api/game/ranking?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error("No se pudo obtener el ranking");
+        const json = await res.json();
+        const apiEntries = (json.entries || []) as Array<any>;
+        const mapped: RankingEntry[] = apiEntries.map((e) => ({
+          id: e.id,
+          userId: e.user_id,
+          userName:
+            e.user_name ||
+            (e.user_id ? String(e.user_id).slice(0, 8) : "Jugador"),
+          rankingType: e.ranking_type,
+          position: e.position,
+          score: e.score,
+          period: e.period,
+          region: e.region,
+        }));
+        setEntries(mapped);
+      } catch (err) {
+        console.error(err);
+        setError("Error cargando ranking");
+        setEntries([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRanking();
+    return () => controller.abort();
+  }, [rankingType, region, period]);
 
   const filtered = useMemo(() => {
-    let list = MOCK_RANKING.filter((r) => r.rankingType === rankingType);
+    let list = entries.filter((r) => r.rankingType === rankingType);
     if (rankingType === "regional") {
       list = list.filter((r) =>
         region === "Global" ? true : r.region === region
@@ -240,7 +294,7 @@ export const RankingPage = () => {
       );
     }
     return list.sort((a, b) => a.position - b.position).slice(0, 10);
-  }, [rankingType, region, period]);
+  }, [rankingType, region, period, entries]);
 
   const topBarData = useMemo(
     () =>
@@ -253,10 +307,12 @@ export const RankingPage = () => {
 
   const regionPie = useMemo(() => {
     const counts: Record<string, number> = {};
-    MOCK_RANKING.filter((r) => r.rankingType === "regional").forEach((r) => {
-      const key = r.region || "Otro";
-      counts[key] = (counts[key] || 0) + 1;
-    });
+    entries
+      .filter((r) => r.rankingType === "regional")
+      .forEach((r) => {
+        const key = r.region || "Otro";
+        counts[key] = (counts[key] || 0) + 1;
+      });
     const colors = [
       "#0284c7",
       "#22c55e",
@@ -271,7 +327,7 @@ export const RankingPage = () => {
       value,
       color: colors[idx % colors.length],
     }));
-  }, []);
+  }, [entries]);
 
   const trendData = useMemo(() => {
     return [
@@ -309,6 +365,14 @@ export const RankingPage = () => {
             Top jugadores por tipo, período y región
           </p>
         </div>
+
+        {loading && (
+          <div className="flex items-center gap-2 text-gray-600 mb-6">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span>Cargando ranking...</span>
+          </div>
+        )}
+        {error && <div className="text-sm text-red-600 mb-6">{error}</div>}
 
         {/* Filtros */}
         <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-8">
@@ -385,10 +449,12 @@ export const RankingPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-gray-900">
-                {filtered[0]?.userName ?? "-"}
+                {filtered[0]?.userName ?? "N/D"}
               </p>
               <p className="text-sm text-gray-600">
-                {filtered[0]?.score?.toLocaleString() ?? ""} pts
+                {filtered[0]?.score
+                  ? `${filtered[0].score.toLocaleString()} pts`
+                  : "N/D"}
               </p>
             </CardContent>
           </Card>
@@ -412,7 +478,7 @@ export const RankingPage = () => {
                       filtered.slice(0, 3).reduce((a, b) => a + b.score, 0) /
                         Math.min(3, filtered.length)
                     ).toLocaleString()
-                  : 0}
+                  : "N/D"}
               </p>
               <p className="text-sm text-gray-600">puntos</p>
             </CardContent>
@@ -556,39 +622,48 @@ export const RankingPage = () => {
             <CardTitle>Tabla de posiciones</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>#</TableHead>
-                    <TableHead>Jugador</TableHead>
-                    <TableHead>Puntaje</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Período</TableHead>
-                    <TableHead>Región</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((e) => (
-                    <TableRow key={e.id}>
-                      <TableCell className="font-medium">
-                        {e.position}
-                      </TableCell>
-                      <TableCell>{e.userName}</TableCell>
-                      <TableCell>{e.score.toLocaleString()}</TableCell>
-                      <TableCell className="capitalize">
-                        {e.rankingType}
-                      </TableCell>
-                      <TableCell>{e.period ?? "-"}</TableCell>
-                      <TableCell>
-                        {e.region ??
-                          (rankingType === "regional" ? "-" : "Global")}
-                      </TableCell>
+            {filtered.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <p className="text-lg font-semibold">N/D</p>
+                <p className="text-sm mt-2">
+                  No hay datos de ranking disponibles
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>#</TableHead>
+                      <TableHead>Jugador</TableHead>
+                      <TableHead>Puntaje</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Período</TableHead>
+                      <TableHead>Región</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filtered.map((e) => (
+                      <TableRow key={e.id}>
+                        <TableCell className="font-medium">
+                          {e.position}
+                        </TableCell>
+                        <TableCell>{e.userName}</TableCell>
+                        <TableCell>{e.score.toLocaleString()}</TableCell>
+                        <TableCell className="capitalize">
+                          {e.rankingType}
+                        </TableCell>
+                        <TableCell>{e.period ?? "-"}</TableCell>
+                        <TableCell>
+                          {e.region ??
+                            (rankingType === "regional" ? "-" : "Global")}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

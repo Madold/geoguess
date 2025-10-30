@@ -21,7 +21,7 @@ import {
   MapPin,
   Clock,
   Target,
-  RotateCcw,
+  ArrowRight,
   Loader2,
 } from "lucide-react";
 import { PlaceSelectorMap } from "@/modules/shared/components/place-selector-map";
@@ -345,7 +345,7 @@ export function GamePage() {
                     >
                       {currentQuestionIndex < questions.length - 1 ? (
                         <>
-                          <RotateCcw className="w-4 h-4 mr-2" />
+                          <ArrowRight className="w-4 h-4 mr-2" />
                           Next Question
                         </>
                       ) : (

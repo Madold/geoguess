@@ -30,10 +30,10 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
   const totalQuestions = questions.length;
   const percentage = Math.round((score / totalQuestions) * 100);
 
-  // Guardar el juego automáticamente al montar el componente
+  // Auto-save the game upon component mount
   useEffect(() => {
     const saveGame = async () => {
-      // Evitar guardar múltiples veces usando ref (protege contra Strict Mode)
+      // Prevent multiple saving attempts (protection against Strict Mode)
       if (hasSaved.current) return;
 
       hasSaved.current = true;
@@ -57,23 +57,27 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || "Error al guardar el juego");
+          // Translated error message: "Error saving game"
+          throw new Error(data.error || "Error saving game");
         }
 
         setSavedGameData(data.data);
         setGameSaved(true);
         toast({
-          title: "¡Juego guardado!",
-          description: "Tus resultados han sido guardados exitosamente.",
+          // Translated toast title: "Game Saved!"
+          title: "Game Saved!",
+          // Translated toast description: "Your results have been successfully saved."
+          description: "Your results have been successfully saved.",
           variant: "default",
         });
       } catch (error) {
-        console.error("Error al guardar el juego:", error);
-        hasSaved.current = false; // Permitir reintentar si hay error
+        console.error("Error saving game:", error);
+        hasSaved.current = false; // Allow retry if there's an error
         toast({
+          // Translated toast title: "Error"
           title: "Error",
-          description:
-            "No se pudo guardar el juego. Puedes intentar nuevamente.",
+          // Translated toast description: "The game could not be saved. You can try again."
+          description: "The game could not be saved. You can try again.",
           variant: "destructive",
         });
       } finally {
@@ -83,9 +87,9 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
 
     saveGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Solo ejecutar una vez al montar
+  }, []); // Only run once on mount
 
-  // Función para formatear el tiempo
+  // Function to format time
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -95,19 +99,24 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
   let message = "";
   let emoji = "";
   if (percentage === 100) {
-    message = "¡Perfecto! ¡Eres un maestro de la geografía!";
+    // Translated message: "Perfect! You are a master of geography!"
+    message = "Perfect! You are a master of geography!";
     emoji = "🏆";
   } else if (percentage >= 80) {
-    message = "¡Excelente trabajo! ¡Conoces tu mundo!";
+    // Translated message: "Excellent work! You know your world!"
+    message = "Excellent work! You know your world!";
     emoji = "🌟";
   } else if (percentage >= 60) {
-    message = "¡Buen trabajo! ¡Sigue explorando!";
+    // Translated message: "Good job! Keep exploring!"
+    message = "Good job! Keep exploring!";
     emoji = "👏";
   } else if (percentage >= 40) {
-    message = "¡No está mal! ¡La práctica hace al maestro!";
+    // Translated message: "Not bad! Practice makes perfect!"
+    message = "Not bad! Practice makes perfect!";
     emoji = "📚";
   } else {
-    message = "¡Sigue aprendiendo e inténtalo de nuevo!";
+    // Translated message: "Keep learning and try again!"
+    message = "Keep learning and try again!";
     emoji = "🌍";
   }
 
@@ -121,27 +130,31 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
             </div>
           </div>
           <CardTitle className="text-4xl font-bold">
-            ¡Juego Terminado!
+            {/* Translated title: "Game Over!" */}
+            Game Over!
           </CardTitle>
 
-          {/* Indicador de guardado */}
+          {/* Saving Indicator */}
           {isSaving && (
             <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Guardando resultados...</span>
+              {/* Translated text: "Saving results..." */}
+              <span>Saving results...</span>
             </div>
           )}
           {gameSaved && (
             <div className="flex items-center justify-center gap-2 text-sm text-green-600">
               <Save className="w-4 h-4" />
-              <span>Resultados guardados</span>
+              {/* Translated text: "Results saved" */}
+              <span>Results saved</span>
             </div>
           )}
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
           <div className="text-center space-y-2">
             <p className="text-lg text-gray-600">
-              ¡Bien hecho,{" "}
+              {/* Translated text: "Well done," */}
+              Well done,{" "}
               <span className="font-bold text-gray-900">{playerName}</span>!
             </p>
             <p className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
@@ -158,34 +171,40 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
           </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
+            {/* Translated title: "Your Performance:" */}
             <h3 className="font-semibold text-gray-900 mb-3">
-              Tu Rendimiento:
+              Your Performance:
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Dificultad:</span>
+                {/* Translated label: "Difficulty:" */}
+                <span className="text-gray-600">Difficulty:</span>
                 <span className="font-semibold text-gray-900 capitalize">
                   {difficulty}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Respuestas Correctas:</span>
+                {/* Translated label: "Correct Answers:" */}
+                <span className="text-gray-600">Correct Answers:</span>
                 <span className="font-semibold text-green-600">{score}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Respuestas Incorrectas:</span>
+                {/* Translated label: "Incorrect Answers:" */}
+                <span className="text-gray-600">Incorrect Answers:</span>
                 <span className="font-semibold text-red-600">
                   {totalQuestions - score}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Precisión:</span>
+                {/* Translated label: "Accuracy:" */}
+                <span className="text-gray-600">Accuracy:</span>
                 <span className="font-semibold text-blue-600">
                   {percentage}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Tiempo Total:</span>
+                {/* Translated label: "Total Time:" */}
+                <span className="text-gray-600">Total Time:</span>
                 <span className="font-semibold text-purple-600">
                   {formatTime(totalGameTime)}
                 </span>
@@ -193,7 +212,8 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
               {savedGameData && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Distancia Promedio:</span>
+                    {/* Translated label: "Average Distance:" */}
+                    <span className="text-gray-600">Average Distance:</span>
                     <span className="font-semibold text-orange-600">
                       {savedGameData.detailedStatistics.averageDistance.toFixed(
                         2
@@ -202,7 +222,8 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">ID del Juego:</span>
+                    {/* Translated label: "Game ID:" */}
+                    <span className="text-gray-600">Game ID:</span>
                     <span className="font-semibold text-gray-900 text-xs">
                       #{savedGameData.gameId}
                     </span>
@@ -219,7 +240,8 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
               disabled={isSaving}
             >
               <RotateCcw className="w-5 h-5 mr-2" />
-              Jugar de Nuevo
+              {/* Translated button text: "Play Again" */}
+              Play Again
             </Button>
             <Button
               onClick={resetGame}
@@ -228,7 +250,8 @@ export function ResultsPage({ onPlayAgain }: ResultsScreenProps) {
               disabled={isSaving}
             >
               <Home className="w-5 h-5 mr-2" />
-              Inicio
+              {/* Translated button text: "Home" */}
+              Home
             </Button>
           </div>
         </CardContent>

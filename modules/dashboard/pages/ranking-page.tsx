@@ -257,7 +257,7 @@ export const RankingPage = () => {
         setEntries(mapped);
       } catch (err) {
         console.error(err);
-        setError("Error cargando ranking");
+        //setError("Error cargando ranking");
         setEntries([]);
       } finally {
         setLoading(false);

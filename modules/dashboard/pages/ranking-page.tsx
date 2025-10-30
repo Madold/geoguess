@@ -21,23 +21,10 @@ import {
 } from "@/components/ui/select";
 import {
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  XAxis,
-  YAxis,
-  Cell,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Award, Globe2, MapPin, Trophy, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -305,46 +292,7 @@ export const RankingPage = () => {
     [filtered]
   );
 
-  const regionPie = useMemo(() => {
-    const counts: Record<string, number> = {};
-    entries
-      .filter((r) => r.rankingType === "regional")
-      .forEach((r) => {
-        const key = r.region || "Otro";
-        counts[key] = (counts[key] || 0) + 1;
-      });
-    const colors = [
-      "#0284c7",
-      "#22c55e",
-      "#f59e0b",
-      "#ef4444",
-      "#8b5cf6",
-      "#14b8a6",
-      "#e11d48",
-    ];
-    return Object.entries(counts).map(([name, value], idx) => ({
-      name,
-      value,
-      color: colors[idx % colors.length],
-    }));
-  }, [entries]);
-
-  const trendData = useMemo(() => {
-    return [
-      { label: "W41", score: 18000 },
-      { label: "W42", score: 19550 },
-      { label: "W43", score: 20420 },
-      { label: "W44", score: 22100 },
-    ];
-  }, []);
-
-  const difficultyConfig = useMemo(() => {
-    const config: Record<string, { label: string }> = {};
-    regionPie.forEach((d) => {
-      config[d.name] = { label: d.name };
-    });
-    return config;
-  }, [regionPie]);
+  // Se eliminaron gráficos de distribución regional y tendencia semanal
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -531,87 +479,27 @@ export const RankingPage = () => {
           </Card>
         </div>
 
-        {/* Gráficas */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-12">
-          <Card className="shadow-lg lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Top 10 por puntuación</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{ score: { label: "Puntuación", color: "#22c55e" } }}
-                className="h-72"
-              >
-                <BarChart data={topBarData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    hide
-                  />
-                  <YAxis tickLine={false} axisLine={false} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar
-                    dataKey="score"
-                    fill="var(--color-score)"
-                    radius={[6, 6, 0, 0]}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle>Distribución Regional (mock)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={difficultyConfig} className="h-72">
-                <PieChart>
-                  <Pie
-                    data={regionPie}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={60}
-                    outerRadius={90}
-                  >
-                    {regionPie.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartLegend
-                    content={<ChartLegendContent nameKey="name" />}
-                  />
-                </PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tendencia semanal (mock) */}
+        {/* Gráfica principal: Top 10 por puntuación */}
         <Card className="shadow-lg mb-12">
           <CardHeader>
-            <CardTitle>Tendencia Semanal (mock)</CardTitle>
+            <CardTitle>Top 10 por puntuación</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer
-              config={{ score: { label: "Puntuación", color: "#16a34a" } }}
+              config={{ score: { label: "Puntuación", color: "#22c55e" } }}
               className="h-72"
             >
-              <LineChart data={trendData}>
+              <BarChart data={topBarData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} hide />
                 <YAxis tickLine={false} axisLine={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Line
-                  type="monotone"
+                <Bar
                   dataKey="score"
-                  stroke="var(--color-score)"
-                  strokeWidth={2}
-                  dot={false}
+                  fill="var(--color-score)"
+                  radius={[6, 6, 0, 0]}
                 />
-              </LineChart>
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>

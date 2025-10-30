@@ -62,6 +62,7 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
     regionalStrengths: [],
   });
   const router = useRouter();
+  const setDifficulty = useGameStore((state) => state.setDifficulty);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -90,7 +91,8 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
   };
 
   const handleQuickGame = () => {
-    // Start quick game with default settings
+    // Start quick game with default settings (medium difficulty)
+    setDifficulty("medium");
     onStartGame();
   };
 

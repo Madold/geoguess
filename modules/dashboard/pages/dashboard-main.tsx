@@ -171,22 +171,6 @@ export function DashboardMain({ onStartGame, userName }: DashboardMainProps) {
                     </p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    {/* Translated text: "Profile and Settings" */}
-                    <span>Profile and Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    {/* Translated text: "My Statistics" */}
-                    <span>My Statistics</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    {/* Translated text: "Settings" */}
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     {/* Translated text: "Log Out" */}

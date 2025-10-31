@@ -37,7 +37,8 @@ export default function LoginPage() {
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver al inicio
+          {/* Volver al inicio -> Back to Home */}
+          Back to Home
         </Link>
 
         <Card className="shadow-2xl border-0">
@@ -48,10 +49,12 @@ export default function LoginPage() {
               </div>
             </div>
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Iniciar Sesión
+              {/* Iniciar Sesión -> Log In */}
+              Log In
             </CardTitle>
             <CardDescription className="text-base">
-              Ingresa tus credenciales para acceder a tu cuenta
+              {/* Ingresa tus credenciales para acceder a tu cuenta -> Enter your credentials to access your account */}
+              Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
 
@@ -60,14 +63,15 @@ export default function LoginPage() {
               {/* Campo de correo electrónico */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Correo Electrónico
+                  {/* Correo Electrónico -> Email Address */}
+                  Email Address
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="your@email.com"
                     className="pl-10 h-12"
                     {...register("email")}
                   />
@@ -80,14 +84,15 @@ export default function LoginPage() {
               {/* Campo de contraseña */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium">
-                  Contraseña
+                  {/* Contraseña -> Password */}
+                  Password
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Tu contraseña"
+                    placeholder="Your password"
                     className="pl-10 pr-10 h-12"
                     {...register("password")}
                   />
@@ -110,16 +115,6 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Enlace de olvidé mi contraseña */}
-              <div className="text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
-                >
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </div>
-
               {/* Mensaje de error */}
               {error && (
                 <Alert variant="destructive">
@@ -133,7 +128,9 @@ export default function LoginPage() {
                 className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
                 disabled={isLoading}
               >
-                {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                {/* Iniciando sesión... -> Logging in... */}
+                {/* Iniciar Sesión -> Log In */}
+                {isLoading ? "Logging in..." : "Log In"}
               </Button>
 
               {/* Separador */}
@@ -143,7 +140,8 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-white px-2 text-muted-foreground">
-                    O continúa con
+                    {/* O continúa con -> Or continue with */}
+                    Or continue with
                   </span>
                 </div>
               </div>
@@ -174,19 +172,23 @@ export default function LoginPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                {isLoading ? "Conectando..." : "Continuar con Google"}
+                {/* Conectando... -> Connecting... */}
+                {/* Continuar con Google -> Continue with Google */}
+                {isLoading ? "Connecting..." : "Continue with Google"}
               </Button>
             </form>
 
             {/* Enlace de registro */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                ¿No tienes una cuenta?{" "}
+                {/* ¿No tienes una cuenta? -> Don't have an account? */}
+                Don't have an account?{" "}
                 <Link
                   href="/register"
                   className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                 >
-                  Regístrate aquí
+                  {/* Regístrate aquí -> Register here */}
+                  Register here
                 </Link>
               </p>
             </div>

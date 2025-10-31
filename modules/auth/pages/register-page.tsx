@@ -55,16 +55,19 @@ export default function RegisterPage() {
                 </div>
                 <div className="space-y-2">
                   <h2 className="text-2xl font-bold text-gray-900">
-                    ¡Cuenta creada exitosamente!
+                    {/* ¡Cuenta creada exitosamente! -> Account Created Successfully! */}
+                    Account Created Successfully!
                   </h2>
                   <p className="text-gray-600">
-                    Tu cuenta ha sido creada. Ya puedes iniciar sesión.
+                    {/* Tu cuenta ha sido creada. Ya puedes iniciar sesión. -> Your account has been created. You can now log in. */}
+                    Your account has been created. You can now log in.
                   </p>
                 </div>
                 <div className="space-y-3">
                   <Link href="/login">
                     <Button className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
-                      Iniciar Sesión
+                      {/* Iniciar Sesión -> Log In */}
+                      Log In
                     </Button>
                   </Link>
                   <Link href="/">
@@ -72,7 +75,8 @@ export default function RegisterPage() {
                       variant="outline"
                       className="w-full h-12 text-base font-semibold"
                     >
-                      Volver al Inicio
+                      {/* Volver al Inicio -> Back to Home */}
+                      Back to Home
                     </Button>
                   </Link>
                 </div>
@@ -93,7 +97,8 @@ export default function RegisterPage() {
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver al inicio
+          {/* Volver al inicio -> Back to Home */}
+          Back to Home
         </Link>
 
         <Card className="shadow-2xl border-0">
@@ -104,10 +109,12 @@ export default function RegisterPage() {
               </div>
             </div>
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Crear Cuenta
+              {/* Crear Cuenta -> Create Account */}
+              Create Account
             </CardTitle>
             <CardDescription className="text-base">
-              Únete a GeoGuess y comienza tu aventura geográfica
+              {/* Únete a GeoGuess y comienza tu aventura geográfica -> Join GeoGuess and start your geographical adventure */}
+              Join GeoGuess and start your geographical adventure
             </CardDescription>
           </CardHeader>
 
@@ -116,14 +123,15 @@ export default function RegisterPage() {
               {/* Campo de nombre de usuario */}
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-sm font-medium">
-                  Nombre de Usuario
+                  {/* Nombre de Usuario -> Username */}
+                  Username
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     id="username"
                     type="text"
-                    placeholder="tu_usuario"
+                    placeholder="your_username"
                     className="pl-10 h-12"
                     {...register("username")}
                   />
@@ -138,14 +146,15 @@ export default function RegisterPage() {
               {/* Campo de correo electrónico */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Correo Electrónico
+                  {/* Correo Electrónico -> Email Address */}
+                  Email Address
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="your@email.com"
                     className="pl-10 h-12"
                     {...register("email")}
                   />
@@ -158,14 +167,15 @@ export default function RegisterPage() {
               {/* Campo de contraseña */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium">
-                  Contraseña
+                  {/* Contraseña -> Password */}
+                  Password
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Tu contraseña"
+                    placeholder="Your password"
                     className="pl-10 pr-10 h-12"
                     {...register("password")}
                   />
@@ -196,7 +206,8 @@ export default function RegisterPage() {
                             : "text-gray-300"
                         }`}
                       />
-                      Al menos una letra minúscula
+                      {/* Al menos una letra minúscula -> At least one lowercase letter */}
+                      At least one lowercase letter
                     </p>
                     <p className="flex items-center">
                       <CheckCircle
@@ -206,7 +217,8 @@ export default function RegisterPage() {
                             : "text-gray-300"
                         }`}
                       />
-                      Al menos una letra mayúscula
+                      {/* Al menos una letra mayúscula -> At least one uppercase letter */}
+                      At least one uppercase letter
                     </p>
                     <p className="flex items-center">
                       <CheckCircle
@@ -216,7 +228,8 @@ export default function RegisterPage() {
                             : "text-gray-300"
                         }`}
                       />
-                      Al menos un número
+                      {/* Al menos un número -> At least one number */}
+                      At least one number
                     </p>
                     <p className="flex items-center">
                       <CheckCircle
@@ -226,7 +239,8 @@ export default function RegisterPage() {
                             : "text-gray-300"
                         }`}
                       />
-                      Al menos 8 caracteres
+                      {/* Al menos 8 caracteres -> At least 8 characters */}
+                      At least 8 characters
                     </p>
                   </div>
                 )}
@@ -238,14 +252,15 @@ export default function RegisterPage() {
                   htmlFor="confirmPassword"
                   className="text-sm font-medium"
                 >
-                  Confirmar Contraseña
+                  {/* Confirmar Contraseña -> Confirm Password */}
+                  Confirm Password
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirma tu contraseña"
+                    placeholder="Confirm your password"
                     className="pl-10 pr-10 h-12"
                     {...register("confirmPassword")}
                   />
@@ -281,7 +296,9 @@ export default function RegisterPage() {
                 className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
                 disabled={isLoading}
               >
-                {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
+                {/* Creando cuenta... -> Creating account... */}
+                {/* Crear Cuenta -> Create Account */}
+                {isLoading ? "Creating account..." : "Create Account"}
               </Button>
 
               {/* Separador */}
@@ -291,7 +308,8 @@ export default function RegisterPage() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-white px-2 text-muted-foreground">
-                    O continúa con
+                    {/* O continúa con -> Or continue with */}
+                    Or continue with
                   </span>
                 </div>
               </div>
@@ -322,19 +340,23 @@ export default function RegisterPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                {isLoading ? "Conectando..." : "Continuar con Google"}
+                {/* Conectando... -> Connecting... */}
+                {/* Continuar con Google -> Continue with Google */}
+                {isLoading ? "Connecting..." : "Continue with Google"}
               </Button>
             </form>
 
             {/* Enlace de login */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                ¿Ya tienes una cuenta?{" "}
+                {/* ¿Ya tienes una cuenta? -> Already have an account? */}
+                Already have an account?{" "}
                 <Link
                   href="/login"
                   className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                 >
-                  Inicia sesión aquí
+                  {/* Inicia sesión aquí -> Log in here */}
+                  Log in here
                 </Link>
               </p>
             </div>
